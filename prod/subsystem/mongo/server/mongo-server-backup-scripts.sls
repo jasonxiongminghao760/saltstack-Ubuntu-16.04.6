@@ -22,3 +22,12 @@ Subsystem.Mongo.Server.Backup:
     - require:
       - file: Subsystem.Mongo.Create.Dir.Scripts
       - file: Subsystem.Mongo.Create.Dir.Backup
+
+Subsystem.Mongo.Server.Backup.Cron:
+  cron.present:
+    - name: '/bin/bash /service/scripts/mongodb_backup.sh &>/dev/null 2>&1'
+    - user: root
+    - identifier: True
+    - hour: '00'
+    - daymonth: '03'
+

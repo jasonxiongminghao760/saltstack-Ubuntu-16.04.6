@@ -32,5 +32,3 @@ mongodump  -u${User} -p${Passwd} -h${Host} --port=${Port}  -o ${Path}/${Dest}  >
 
 # 删除30天前的备份文件
 find  $Path/ -type d -mtime +30 |xargs rm -rf 
-
-
