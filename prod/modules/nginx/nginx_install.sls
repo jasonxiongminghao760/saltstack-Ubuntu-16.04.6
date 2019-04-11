@@ -1,4 +1,4 @@
-apt_nginx_prerequisites:
+prod_modules_nginx_install_prerequisites:
   pkg.installed:
     - names:
       - curl 
@@ -6,7 +6,7 @@ apt_nginx_prerequisites:
       - ca-certificates 
       - lsb-release
 
-add_nginx_repo:
+prod_modules_nginx_set:
   pkgrepo.managed:
     - humaname: Nginx repo
     - name: 'deb http://nginx.org/packages/ubuntu trusty nginx'
@@ -15,13 +15,13 @@ add_nginx_repo:
     - gpgkey: https://nginx.org/keys/nginx_signing.key
     - gpgcheck: 1
     - require:
-      - pkg: apt_nginx_prerequisites
+      - pkg: prod_modules_nginx_install_prerequisites
     
 
-apt_nginx_software:
+prod_modules_nginx_install_software: 
   pkg.installed:
     - name: nginx
     - fromrepo:  trusty
     - refresh: True
     - require:
-       - pkgrepo: add_nginx_repo
+       - pkgrepo: prod_modules_nginx_set
