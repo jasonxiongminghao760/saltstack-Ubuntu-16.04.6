@@ -15,7 +15,7 @@ Subsystem.Mongo.Server.Deploy:
     - name: /data/mongodata
     - user: mongodb
     - group: mongodb
-    - makedirs: True
+    #- makedirs: True
 
 Subsystem.Mongo.Server.Root:
   cmd.script:
