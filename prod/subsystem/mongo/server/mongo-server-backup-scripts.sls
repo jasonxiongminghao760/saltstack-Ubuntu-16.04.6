@@ -14,10 +14,10 @@ Subsystem.Mongo.Server.Backup:
     - source: salt://subsystem/mongo/server/mongodb_backup.sh
     - template: jinja
     - defaults:
-      user: root
-      password: 123456
-      host: 127.0.0.1
-      port: 27017
+      user: {{ pillar['user'] }}
+      password: {{ pillar['password'] }}
+      host: {{ pillar['host'] }}
+      port: {{ pillar['port'] }}
       path: /data/backup/mongodb 
     - require:
       - file: Subsystem.Mongo.Create.Dir.Scripts
