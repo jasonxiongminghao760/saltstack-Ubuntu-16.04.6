@@ -1,6 +1,6 @@
 Subsystem.Mongo.Create.Dir.Scripts:
   file.directory:
-    - name: /service/scripts/
+    - name: /server/scripts/
     - makedirs: True
 
 Subsystem.Mongo.Create.Dir.Backup:
@@ -10,7 +10,7 @@ Subsystem.Mongo.Create.Dir.Backup:
 
 Subsystem.Mongo.Server.Backup:
   file.managed:
-    - name: /service/scripts/mongodb_backup.sh
+    - name: /server/scripts/mongodb_backup.sh
     - source: salt://subsystem/mongo/server/mongodb_backup.sh
     - template: jinja
     - defaults:
