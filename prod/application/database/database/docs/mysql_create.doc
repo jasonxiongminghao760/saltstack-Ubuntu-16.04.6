@@ -1,0 +1,58 @@
+
+===================该文本描述创建mysql数据库的流程===================
+1、salt minion 的即mysql客户端，需要安装以下工具
+# apt-get install python-mysqldb
+# pip install mysql
+
+2、先测试master是否能够访问到远程的mysql数据库：
+# mysql -uroot -p'abc123456' -h 10.0.0.136
+
+3、该sls执行方式：
+# salt 'elk3.huawei.inapk.com' state.sls application.database.database.mysql_create  pillar="{'user':'webapp','password':'123456','name':'website','host':'10.0.0.136','port':'3306','op_user':'root','op_password':'abc123456'}" saltenv=prod
+===================	    end    ===================
+注意：下面sls文件中所有的connection... 都是连接到需要操作的数据库的连接凭证，
+
+mysql的模块操作比较特殊，每一步的操作都需要先由salt-master连接到指定minion的mysql数据库中进行对应的操作
+
+
+
+===================sls文件内容如下===================
+#1、创建数据库
+DatabaseCreate:
+  mysql_datases.present:
+    - name: {{ pillar['name'] }}  # 数据库名
+    - character_set: utf8mb4      # 数据库字符集
+    - connection_host: {{ pillar['host'] }}   		 # 连接主机
+    - connection_port: {{ pillar['port'] }}     	 # 连接端口 
+    - connection_user: {{ pillar['op_user'] }}    	 # 连接用户名
+    - connection_pass: '{{ pillar['op_password'] }}' # 连接密码
+    - connection_charset: utf8						 # 连接字符集
+
+
+#2、添加用户
+DatabaseUser:
+  mysql_user.present:
+    - name: {{ pillar['user'] }}  	# 创建用户的用户名
+    - host: '%'						# 用户授权的地址段（监听地址段）
+    - password: '{{ pillar['password'] }}'  # 用户密码
+    - allow_passwordless: True     			# 允许无密码登录
+    - connection_host: {{ pillar['host'] }} 
+    - connection_port: {{ pillar['port'] }}  
+    - connection_user: {{ pillar['op_user'] }}
+    - connection_pass: '{{ pillar['op_password'] }}' 
+    - connection_charset: utf8  
+
+
+#3、用户授权
+DatabaseGrant:  
+  mysql_grants.present:
+    - grant: all privileges 			 # 该用户授权的权限控制（例如：select、update...）
+    - database: {{ pillar['name'] }}.*   # xx.*数据库授权，让其可管理该xx库下的所有表
+    - user: {{ pillar['user'] }}	  	 # 被授权的用户
+    - host: '%'
+    - revoke_first: True
+    - connection_host: {{ pillar['host'] }}
+    - connection_port: {{ pillar['port'] }}    
+    - connection_user: {{ pillar['op_user'] }}
+    - connection_pass: '{{ pillar['op_password'] }}'
+    - connection_charset: utf8 
