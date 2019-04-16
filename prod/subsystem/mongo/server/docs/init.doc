@@ -1,0 +1,20 @@
+===================该文本描述该sls的流程===================
+mongodb部署sls执行：
+# salt 'testing-node2-huawei.com' state.sls subsystem.mongo.server pillar="{'user':'root','password':'123456','host':'127.0.0.1','port':'27017'}" saltenv=prod 
+
+pillar 解释：以下参数主要是传给mongo-server-backup-scripts.sls（推送mongod备份脚本）执行的
+pillar="{
+'user':'root',	
+'password':'123456',
+'host':'127.0.0.1',
+'port':'27017'
+}"
+
+
+
+===================sls文件内容如下===================
+
+include:
+  - .mongo-server-installed		#1、添加mongod repo源，安装，并创建数据目录，推送配置文件，重启，创建root用户 
+  - .mongo-server-backup-scripts	#2、推送mongod备份脚本，并设置定时任务（cron:03:00）
+

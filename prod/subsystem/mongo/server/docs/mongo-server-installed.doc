@@ -1,0 +1,51 @@
+===================该文本描述该sls的流程===================
+....
+
+===================sls文件内容如下===================
+
+# 1、添加mongodb3.4的官方repo源
+Subsystem.Mongo.Server.Deploy:
+  pkgrepo.managed:
+    - humanname: mongodb-org-3.4		# repo源的software name
+    - name: "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse"   # 添加repo源
+    - key_url: salt://subsystem/mongo/server/mongo-3.4.pub # 该repo源的公钥
+    - file: /etc/apt/sources.list.d/mongodb-org-3.4.list   # 该repo源保存到该文件
+    - unless: apt-key list|grep -qE 'MongoDB 3.4 Release'  # 返回结果为True，则不执行安装software
+
+# 2、安装mongodb
+  pkg.installed:
+    - name: mongodb-org			# apt-get install 安装mongodb 3.4
+    - skip_verify: True 		# 跳过对package的GPG验证
+    - skip_suggestions: True 		# 强制严格匹配安装包名(mongodb-org)，禁止查找包的替代品
+
+# 3、创建mongodb数据目录
+  file.directory:
+    - name: /data/mongodata		# 创建mongod的数据目录（存放mongodb的数据文件）
+    - user: mongodb			# 该目录赋予用户为mongodb
+    - group: mongodb			# 该目录赋予用户组为mongodb
+
+# 4、管理mongodb的配置文件
+Subsystem.Mongo.Server.Config:
+  file.managed:
+    - name: /etc/mongod.conf    # 推送到对端后的文件名
+    - source: salt://subsystem/mongo/server/mongod_conf.jinja   # 在salt上所管理的文件
+        - template: jinja
+    - defaults:
+      config_port: 27017        # mongod端口
+      config_ip: 0.0.0.0        # mongod 监听IP
+
+# 5、mongodb服务管理
+  service.running:
+    - name: mongod              # 管理mongodb服务
+    - enable: True              # 启动开机自启动
+    - restart: True             # 当watch 返回True时允许restart
+    - watch:
+      - file: /etc/mongod.conf  # 当该文件发生变化时，则触发restart mongod
+
+# 6、执行shell脚本文件，该文件用于给mongodb创建root用户并设置密码，和授权
+Subsystem.Mongo.Server.Root:
+  cmd.script:
+    - name: salt://subsystem/mongo/server/mongo-server-grant-root.sh
+    - stateful: True		# 对正在执行的命令返回有关执行状态的数据信息
+    - require:
+      - service: mongod		# 依赖于mongod进程是否启动（启动则执行这条state）

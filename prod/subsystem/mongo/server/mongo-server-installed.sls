@@ -16,6 +16,21 @@ Subsystem.Mongo.Server.Deploy:
     - user: mongodb
     - group: mongodb
 
+Subsystem.Mongo.Server.Config:
+  file.managed:
+    - name: /etc/mongod.conf
+    - source: salt://subsystem/mongo/server/mongod_conf.jinja
+    - template: jinja
+    - defaults:
+      config_port: 27018
+      config_ip: 0.0.0.0
+  service.running:
+    - name: mongod
+    - enable: True
+    - restart: True
+    - watch:
+      - file: /etc/mongod.conf
+
 Subsystem.Mongo.Server.Root:
   cmd.script:
     - name: salt://subsystem/mongo/server/mongo-server-grant-root.sh

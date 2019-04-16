@@ -9,8 +9,8 @@ systemLog:
   path: /data/mongodata/mongod.log
 
 net:
-  port:  27017
-  bindIp:  0.0.0.0
+  port:  {{ config_port }}
+  bindIp:  {{ config_ip }}
 
 security:
    authorization: enabled
