@@ -9,8 +9,8 @@ systemLog:
   path: /data/mongodata/mongod.log
 
 net:
-  port: {{ pillar['port'] }}
-  bindIp: {{ pillar['host'] }}
+  port:  27017
+  bindIp:  0.0.0.0
 
 security:
    authorization: enabled
