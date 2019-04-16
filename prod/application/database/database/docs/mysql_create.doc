@@ -24,18 +24,18 @@ DatabaseCreate:
     - character_set: utf8mb4      # 数据库字符集
     - connection_host: {{ pillar['host'] }}   		   # 连接主机
     - connection_port: {{ pillar['port'] }}     	   # 连接端口 
-    - connection_user: {{ pillar['op_user'] }}    	 # 连接用户名
-    - connection_pass: '{{ pillar['op_password'] }}' # 连接密码
-    - connection_charset: utf8						           # 连接字符集
+    - connection_user: {{ pillar['op_user'] }}    	   # 连接用户名
+    - connection_pass: '{{ pillar['op_password'] }}'       # 连接密码
+    - connection_charset: utf8			           # 连接字符集
 
 
 #2、添加用户
 DatabaseUser:
   mysql_user.present:
     - name: {{ pillar['user'] }}  	          # 创建用户的用户名
-    - host: '%'						                    # 用户授权的地址段（监听地址段）
-    - password: '{{ pillar['password'] }}'    # 用户密码
-    - allow_passwordless: True     			      # 允许无密码登录
+    - host: '%'		                          # 用户授权的地址段（监听地址段）
+    - password: '{{ pillar['password'] }}'        # 用户密码
+    - allow_passwordless: True   	          # 允许无密码登录
     - connection_host: {{ pillar['host'] }} 
     - connection_port: {{ pillar['port'] }}  
     - connection_user: {{ pillar['op_user'] }}
@@ -46,8 +46,8 @@ DatabaseUser:
 #3、用户授权
 DatabaseGrant:  
   mysql_grants.present:
-    - grant: all privileges 			       # 该用户授权的权限控制（例如：select、update...）
-    - database: {{ pillar['name'] }}.*   # xx.*数据库授权，让其可管理该xx库下的所有表
+    - grant: all privileges 			   # 该用户授权的权限控制（例如：select、update...）
+    - database: {{ pillar['name'] }}.*             # xx.*数据库授权，让其可管理该xx库下的所有表
     - user: {{ pillar['user'] }}	  	   # 被授权的用户
     - host: '%'
     - revoke_first: True

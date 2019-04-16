@@ -1,0 +1,36 @@
+===================该文本描述该sls的流程===================
+添加mysql用户并授权数据库sls执行：
+# salt 'elk3.huawei.inapk.com' state.sls application.database.database.mysql_user pillar="{'user':'jack','password':'abc@123','name':'test','host':'10.0.0.136','port':'3306','op_user':'root','op_password':'abc123'}" saltenv=prod   
+
+
+注意：下面sls文件中所有的connection... 都是连接到需要操作的数据库的连接凭证，
+===================sls文件内容如下===================
+
+# 1、创建mysql用户
+DatabaseUser:
+  mysql_user.present:
+    - name: {{ pillar['user'] }}
+    - host: '%'
+    - password: '{{ pillar['password'] }}'
+    - allow_passwordless: True
+    - connection_host: {{ pillar['host'] }}
+    - connection_port: {{ pillar['port'] }}
+    - connection_user: {{ pillar['op_user'] }}
+    - connection_pass: '{{ pillar['op_password'] }}'
+    - connection_charset: utf8
+
+# 2、mysql用户授权管理数据库
+DatabaseGrant:
+  mysql_grants.present:
+    - grant:  all privileges
+    - database: {{ pillar['name'] }}.*
+    - user: {{ pillar['user'] }}
+    - host: '%'
+    - revoke_first: True
+    - connection_host: {{ pillar['host'] }}
+    - connection_port: {{ pillar['port'] }}
+    - connection_user: {{ pillar['op_user'] }}
+    - connection_pass: '{{ pillar['op_password'] }}'
+    - connection_charset: utf8
+   
+
