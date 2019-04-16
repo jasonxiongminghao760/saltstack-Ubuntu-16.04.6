@@ -1,0 +1,23 @@
+===================该文本描述该sls的流程===================
+该文件管理linux系统的 "打开最大文件描述符"
+
+推送limits配置文件sls执行：
+# salt 'elk3.huawei.inapk.com' state.sls system.limit saltenv=prod
+
+===================sls文件内容如下===================
+
+# 管理limits.conf文件
+System.Limit:
+  file.managed:
+    - name: /etc/security/limits.conf
+    - source: salt://system/files/limit.conf.jinja
+    - user: root
+    - group: root
+    - mode: 644
+    - backup: minion		# 对比文件内容有差异，则对原文件备份后再修改
+    - template: jinja
+    - defaults:
+      root_number: 65545  	# root的openfile
+      other_number: 25535  	# * 的openfile 
+    - unless:  grep -v "^#" /etc/security/limits.conf  |egrep "root|\*"  # 返回True，说明对端已设置，则不执行该state
+

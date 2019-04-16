@@ -1,0 +1,17 @@
+===================该文本描述该sls的流程===================
+安装基础software sls执行：
+#  salt 'elk3.huawei.inapk.com' state.sls system.basis_pkg saltenv=prod
+
+===================sls文件内容如下===================
+
+# 安装系统的基础software
+System.Basis.Pkg:
+  pkg.installed:
+    - names:
+      - tree
+      - wget
+      - iftop
+      - iotop
+      - unzip
+      - gcc
+      - openssl
