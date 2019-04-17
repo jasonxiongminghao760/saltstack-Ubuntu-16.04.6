@@ -22,7 +22,7 @@ Subsystem.Mongo.Server.Config:
     - source: salt://subsystem/mongo/server/mongod_conf.jinja
     - template: jinja
     - defaults:
-      config_port: 27018
+      config_port: 27017
       config_ip: 0.0.0.0
   service.running:
     - name: mongod
