@@ -8,6 +8,6 @@ System.Limit:
     - backup: minion
     - template: jinja
     - defaults:
-      root_number: 65545
-      other_number: 25535
-    - unless:  grep -v "^#" /etc/security/limits.conf  |egrep "root|\*" 
+      root_number: 65535
+      other_number: 65535
+    - unless:  grep -v "^#" /etc/security/limits.conf  |egrep "^root|^\*"
