@@ -3,7 +3,7 @@
 # 定义mongo用户名/密码/端口等相关变量
 User='{{ user }}'
 Passwd='{{ password }}'
-Host='{{ host }}'
+IP='{{ host }}'
 Port='{{ port }}'
 Path='{{ path }}'
 
@@ -25,7 +25,7 @@ Now_Time=$(date +%F_%H:%M:%S)
 [  ! -d ${Dest} ] || mkdir -p ${Path}/${Dest}; echo "${Now_Time}  ${Dest}目录不存在,${Dest}创建成功" >>${Log_File} && echo "${Now_Time}  ${Dest}目录已存在,停止创建(不影响备份)" >>${Log_File}
 
 # 备份整个mongodb库
-mongodump  -u${User} -p${Passwd} -h${Host} --port=${Port}  -o ${Path}/${Dest}  >/dev/null  2>&1
+mongodump  -u${User} -p${Passwd} -h${IP} --port=${Port}  -o ${Path}/${Dest}  >/dev/null  2>&1
 [ $? -eq 0 ] && echo "${Now_Time}  mongodb全备执行成功...." >>${Log_File} || echo "${Now_Time} mongodb全备执行失败..." >>${Log_File}
 
 # rsync同步备份文件到，rsync服务端 （暂留） 
